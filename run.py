@@ -1,0 +1,11 @@
+# run.py
+"""
+Point d'entrée pour lancer l'application en mode développement.
+"""
+from it_assistant import create_app
+
+app = create_app()
+
+if __name__ == '__main__':
+    # debug=True uniquement en développement
+    app.run(debug=True)

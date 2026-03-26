@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Base de connaissances{% endblock %}
+{% block content %}
+<h2>Base de connaissances</h2>
+{# Admin uniquement : les techniciens/utilisateurs n'ont plus accès à la base de connaissances #}
+{% if current_user.is_admin() %}
+    <a href="{{ url_for('knowledge.new_entry') }}" class="btn btn-primary mb-3">Ajouter une entrée</a>
+{% endif %}
+<div class="row">
+    {% for entry in entries %}
+    <div class="col-md-6 mb-3">
+        <div class="card h-100">
+            <div class="card-header bg-info text-white d-flex justify-content-between">
+                <span>{{ entry.category }}</span>
+                <small>Ajouté le {{ entry.created_at.strftime('%d/%m/%Y') }}</small>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">{{ entry.problem }}</h5>
+                <p class="card-text">{{ entry.solution[:150] }}...</p>
+                <p><strong>Mots-clés :</strong> {{ entry.keywords }}</p>
+            </div>
+            <div class="card-footer">
+                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modal-{{ entry.id }}">Voir</button>
+                {% if current_user.is_admin() %}
+                    <a href="{{ url_for('knowledge.edit_entry', entry_id=entry.id) }}" class="btn btn-sm btn-outline-warning">Modifier</a>
+                    <form action="{{ url_for('knowledge.delete_entry', entry_id=entry.id) }}" method="POST" style="display:inline;">
+                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Supprimer cette entrée ?');">Supprimer</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour afficher la solution complète -->
+    <div class="modal fade" id="modal-{{ entry.id }}" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ entry.problem }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Catégorie :</strong> {{ entry.category }}</p>
+                    <p><strong>Mots-clés :</strong> {{ entry.keywords }}</p>
+                    <p><strong>Solution :</strong></p>
+                    <div class="border p-3 bg-light">{{ entry.solution|safe }}</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <p>Aucune entrée dans la base de connaissances.</p>
+    {% endfor %}
+</div>
+{% endblock %}

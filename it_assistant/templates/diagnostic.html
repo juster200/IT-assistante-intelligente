@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Diagnostics{% endblock %}
+{% block content %}
+<h2 class="mb-4 fw-bold"><i class="fas fa-stethoscope me-2"></i>Diagnostics système et réseau</h2>
+
+<div class="row">
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow-lg border-0 h-100">
+            <div class="card-header bg-primary text-white py-3">
+                <h5 class="mb-0"><i class="fas fa-desktop me-2"></i>Diagnostic système</h5>
+            </div>
+            <div class="card-body">
+                <button id="btn-system" class="btn btn-primary mb-3">
+                    <i class="fas fa-play me-1"></i>Lancer le diagnostic
+                </button>
+                <div id="system-result" class="border rounded p-3 bg-light" style="min-height: 200px; background-color: #f8f9fa; border: 1px solid #dee2e6;">
+                    Cliquez sur le bouton pour lancer le diagnostic.
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow-lg border-0 h-100">
+            <div class="card-header bg-success text-white py-3">
+                <h5 class="mb-0"><i class="fas fa-network-wired me-2"></i>Diagnostic réseau</h5>
+            </div>
+            <div class="card-body">
+                <div class="input-group mb-3">
+                    <span class="input-group-text"><i class="fas fa-server"></i></span>
+                    <input type="text" id="network-host" class="form-control" placeholder="Hôte (ex: 8.8.8.8)" value="8.8.8.8">
+                    <span class="input-group-text"><i class="fas fa-plug"></i></span>
+                    <input type="number" id="network-port" class="form-control" placeholder="Port (optionnel)" style="max-width: 100px;">
+                    <button id="btn-network" class="btn btn-success">
+                        <i class="fas fa-play"></i>
+                    </button>
+                </div>
+                <div id="network-result" class="border rounded p-3 bg-light" style="min-height: 200px; background-color: #f8f9fa; border: 1px solid #dee2e6;">
+                    Entrez un hôte et éventuellement un port, puis lancez le diagnostic.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

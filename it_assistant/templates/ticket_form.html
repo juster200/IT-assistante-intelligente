@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">{{ title }}</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="">
+                    {{ form.hidden_tag() }}
+                    <!--
+                      Ce template est utilisé par 2 formulaires :
+                      - TicketForm (création) : contient title/description/priority
+                      - TicketUpdateForm (édition technicien) : contient status/assigned_to/resolution
+
+                      Correction : ne pas accéder à form.title/form.description si ces champs n'existent pas,
+                      sinon Jinja lève une erreur 500 (UndefinedError).
+                    -->
+
+                    {% if form.title is defined %}
+                        <div class="mb-3">
+                            {{ form.title.label(class="form-label") }}
+                            {{ form.title(class="form-control" + (" is-invalid" if form.title.errors else "")) }}
+                            {% for error in form.title.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% elif ticket is defined %}
+                        <!-- Mode édition (TicketUpdateForm) : afficher le titre en lecture seule. -->
+                        <div class="mb-3">
+                            <label class="form-label">Titre</label>
+                            <input class="form-control" type="text" value="{{ ticket.title }}" disabled>
+                        </div>
+                    {% endif %}
+
+                    {% if form.description is defined %}
+                        <div class="mb-3">
+                            {{ form.description.label(class="form-label") }}
+                            {{ form.description(class="form-control" + (" is-invalid" if form.description.errors else ""), rows=5) }}
+                            {% for error in form.description.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% elif ticket is defined %}
+                        <!-- Mode édition (TicketUpdateForm) : afficher la description en lecture seule. -->
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" rows="5" disabled>{{ ticket.description }}</textarea>
+                        </div>
+                    {% endif %}
+
+                    {% if form.priority %}
+                    <div class="mb-3">
+                        {{ form.priority.label(class="form-label") }}
+                        {{ form.priority(class="form-select" + (" is-invalid" if form.priority.errors else "")) }}
+                        {% for error in form.priority.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    {% elif ticket is defined %}
+                    <!-- Mode édition : priorité affichée (lecture seule) pour contexte. -->
+                    <div class="mb-3">
+                        <label class="form-label">Priorité</label>
+                        <input class="form-control" type="text" value="{{ ticket.priority }}" disabled>
+                    </div>
+                    {% endif %}
+                    {% if form.status %}
+                    <div class="mb-3">
+                        {{ form.status.label(class="form-label") }}
+                        {{ form.status(class="form-select" + (" is-invalid" if form.status.errors else "")) }}
+                        {% for error in form.status.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% if form.assigned_to %}
+                    <div class="mb-3">
+                        {{ form.assigned_to.label(class="form-label") }}
+                        {{ form.assigned_to(class="form-select" + (" is-invalid" if form.assigned_to.errors else "")) }}
+                        {% for error in form.assigned_to.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% if form.resolution %}
+                    <div class="mb-3">
+                        {{ form.resolution.label(class="form-label") }}
+                        {{ form.resolution(class="form-control" + (" is-invalid" if form.resolution.errors else ""), rows=5) }}
+                        {% for error in form.resolution.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    <div class="d-grid">
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

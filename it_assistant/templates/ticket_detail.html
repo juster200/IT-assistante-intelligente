@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Ticket #{{ ticket.id }}{% endblock %}
+{% block content %}
+<!-- Détail ticket : inclut un accès "Résoudre" (technicien/admin) et "Voir solution" (utilisateur concerné) -->
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h4 class="mb-0"><i class="fas fa-ticket-alt me-2"></i>Ticket #{{ ticket.id }} - {{ ticket.title }}</h4>
+                <span>
+                    <span class="badge bg-{{ 'danger' if ticket.priority=='critique' else 'warning' if ticket.priority=='haute' else 'info' }} me-2">{{ ticket.priority }}</span>
+                    <span class="badge bg-secondary">{{ ticket.status }}</span>
+                </span>
+            </div>
+            <div class="card-body">
+                <p><strong>Créé par :</strong> {{ ticket.author.username }} le {{ ticket.created_at.strftime('%d/%m/%Y %H:%M') }}</p>
+                {% if ticket.assigned_to %}
+                    <p><strong>Assigné à :</strong> {{ ticket.technician.username }}</p>
+                {% endif %}
+                <p><strong>Description :</strong></p>
+                <div class="border rounded p-3 bg-light">{{ ticket.description|safe }}</div>
+                
+                {% if ticket.resolution %}
+                    <p class="mt-4"><strong>Solution apportée :</strong></p>
+                    <div class="border rounded p-3 bg-success text-white">{{ ticket.resolution|safe }}</div>
+                {% endif %}
+            </div>
+            <div class="card-footer">
+                {% if current_user.is_technician() %}
+                    <a href="{{ url_for('tickets.resolve_ticket', ticket_id=ticket.id) }}" class="btn btn-warning">
+                        <i class="fas fa-wrench me-1"></i>Résoudre / Mettre à jour
+                    </a>
+                {% else %}
+                    <a href="{{ url_for('tickets.ticket_solution', ticket_id=ticket.id) }}" class="btn btn-outline-success">
+                        <i class="fas fa-lightbulb me-1"></i>Voir la solution
+                    </a>
+                {% endif %}
+                <a href="javascript:history.back()" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-1"></i>Retour
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

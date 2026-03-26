@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block title %}Statistiques{% endblock %}
+{% block content %}
+<h2>Statistiques</h2>
+<div class="row">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary mb-3">
+            <div class="card-header">Total tickets</div>
+            <div class="card-body">
+                <h5 class="card-title">{{ total_tickets }}</h5>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success mb-3">
+            <div class="card-header">Utilisateurs</div>
+            <div class="card-body">
+                <h5 class="card-title">{{ users_count }}</h5>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">Tickets par statut</div>
+            <div class="card-body">
+                <canvas id="statusChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">Tickets par priorité</div>
+            <div class="card-body">
+                <canvas id="priorityChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">Derniers logs</div>
+    <div class="card-body">
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th>Utilisateur</th>
+                    <th>Action</th>
+                    <th>Détails</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in recent_logs %}
+                <tr>
+                    <td>{{ log.user.username if log.user else 'Anonyme' }}</td>
+                    <td>{{ log.action }}</td>
+                    <td>{{ log.details[:50] }}{% if log.details|length > 50 %}...{% endif %}</td>
+                    <td>{{ log.timestamp.strftime('%d/%m/%Y %H:%M') }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="4" class="text-center">Aucun log.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Données des tickets par statut
+    var statusLabels = [{% for status in tickets_by_status %}"{{ status[0] }}",{% endfor %}];
+    var statusData = [{% for status in tickets_by_status %}{{ status[1] }},{% endfor %}];
+    var ctx1 = document.getElementById('statusChart').getContext('2d');
+    new Chart(ctx1, {
+        type: 'pie',
+        data: {
+            labels: statusLabels,
+            datasets: [{
+                data: statusData,
+                backgroundColor: ['#28a745', '#ffc107', '#dc3545', '#17a2b8']
+            }]
+        }
+    });
+
+    // Données des tickets par priorité
+    var priorityLabels = [{% for prio in tickets_by_priority %}"{{ prio[0] }}",{% endfor %}];
+    var priorityData = [{% for prio in tickets_by_priority %}{{ prio[1] }},{% endfor %}];
+    var ctx2 = document.getElementById('priorityChart').getContext('2d');
+    new Chart(ctx2, {
+        type: 'bar',
+        data: {
+            labels: priorityLabels,
+            datasets: [{
+                label: 'Nombre de tickets',
+                data: priorityData,
+                backgroundColor: ['#6c757d', '#007bff', '#fd7e14', '#dc3545']
+            }]
+        },
+        options: {
+            scales: {
+                y: { beginAtZero: true, stepSize: 1 }
+            }
+        }
+    });
+</script>
+{% endblock %}

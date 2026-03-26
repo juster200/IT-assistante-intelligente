@@ -1,0 +1,10 @@
+Flask
+Flask-Login
+Flask-SQLAlchemy
+Flask-WTF
+WTForms
+psutil
+ping3
+fuzzywuzzy
+python-Levenshtein
+email-validator

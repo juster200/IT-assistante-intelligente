@@ -1,0 +1,240 @@
+/* Style personnalisé pour l'application */
+
+/*
+  Thèmes :
+  - Le thème est contrôlé via <html data-theme="light|dark"> (voir base.html).
+  - Les variables ci-dessous permettent de basculer clair/sombre sans dupliquer tout le CSS.
+*/
+:root {
+    --app-bg: #f4f7fc;
+    --app-text: #212529;
+    --app-muted: #6c757d;
+    --app-surface: #ffffff;
+    --app-surface-2: #f8f9fa;
+    --app-border: #dee2e6;
+}
+
+:root[data-theme="dark"] {
+    --app-bg: #0b1220;
+    --app-text: #e5e7eb;
+    --app-muted: #9ca3af;
+    --app-surface: #111827;
+    --app-surface-2: #0f172a;
+    --app-border: #334155;
+}
+
+/* Arrière-plan général */
+body {
+    background-color: var(--app-bg);
+    color: var(--app-text);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Messages du chat */
+.chat-container {
+    height: 300px;
+    overflow-y: auto;
+    background-color: var(--app-surface);
+    padding: 15px;
+    border-radius: 10px;
+    display: flow-root;
+    border: 1px solid var(--app-border);
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.message.user {
+    background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+    padding: 8px 12px;
+    border-radius: 15px 15px 0 15px;
+    margin-bottom: 10px;
+    text-align: right;
+    max-width: 80%;
+    float: right;
+    clear: both;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border: 1px solid #ced4da;
+}
+
+.message.bot {
+    background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+    padding: 8px 12px;
+    border-radius: 15px 15px 15px 0;
+    margin-bottom: 10px;
+    text-align: left;
+    max-width: 80%;
+    float: left;
+    clear: both;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border: 1px solid #9fd0d9;
+}
+
+.message strong {
+    color: var(--app-muted);
+}
+
+/* Badges de priorité */
+.badge-critique { background-color: #dc3545; }
+.badge-haute { background-color: #fd7e14; }
+.badge-moyenne { background-color: #ffc107; }
+.badge-basse { background-color: #17a2b8; }
+
+/* Centrage vertical pour les pages d'accueil */
+.min-vh-75 {
+    min-height: 75vh;
+}
+
+/* Personnalisation des cartes */
+.card {
+    border-radius: 15px;
+    border: none;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+    transition: transform 0.2s, box-shadow 0.2s;
+    background-color: var(--app-surface);
+    margin-bottom: 20px;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.15) !important;
+}
+
+.card-header {
+    border-radius: 15px 15px 0 0 !important;
+    font-weight: 600;
+    border-bottom: 2px solid rgba(255,255,255,0.2);
+}
+
+.card-footer {
+    border-radius: 0 0 15px 15px !important;
+    background-color: var(--app-surface-2);
+}
+
+/* Listes dans les cartes */
+.list-group-item {
+    border-left: none;
+    border-right: none;
+    padding: 12px 15px;
+    background-color: var(--app-surface);
+    color: var(--app-text);
+    border-color: var(--app-border);
+}
+
+.list-group-item:first-child {
+    border-top: none;
+}
+
+.list-group-item:last-child {
+    border-bottom: none;
+}
+
+/* Boutons de suggestion */
+.suggestion-btn {
+    font-size: 0.85rem;
+    border-radius: 20px;
+    padding: 0.4rem 1rem;
+    background-color: var(--app-surface-2);
+    border: 1px solid var(--app-border);
+    color: var(--app-text);
+    transition: all 0.2s;
+}
+
+.suggestion-btn:hover {
+    background-color: var(--app-surface);
+    border-color: var(--app-border);
+}
+
+/* Tableaux */
+.table thead th {
+    border-bottom: 2px solid var(--app-border);
+    font-weight: 600;
+    background-color: var(--app-surface-2);
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(0,123,255,0.05);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.card, .alert {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Amélioration des formulaires */
+.form-control, .form-select {
+    border-radius: 10px;
+    border: 1px solid var(--app-border);
+    background-color: var(--app-surface);
+    color: var(--app-text);
+    padding: 10px 15px;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+}
+
+.btn {
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-weight: 500;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    border: none;
+}
+
+.btn-info {
+    background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+    border: none;
+    color: white;
+}
+
+/* Badge de rôle dans la navbar */
+.navbar .badge {
+    font-size: 0.7rem;
+    padding: 0.35rem 0.65rem;
+    border-radius: 30px;
+}
+
+/* Ajustements spécifiques au thème sombre (Bootstrap 5.1 n'a pas de dark mode natif) */
+:root[data-theme="dark"] .table {
+    color: var(--app-text);
+}
+
+:root[data-theme="dark"] .table tbody td,
+:root[data-theme="dark"] .table thead th {
+    border-color: var(--app-border);
+}
+
+:root[data-theme="dark"] .modal-content,
+:root[data-theme="dark"] .dropdown-menu {
+    background-color: var(--app-surface);
+    color: var(--app-text);
+    border-color: var(--app-border);
+}
+
+:root[data-theme="dark"] .text-muted {
+    color: var(--app-muted) !important;
+}
+
+:root[data-theme="dark"] .message.user {
+    background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+    border: 1px solid var(--app-border);
+}
+
+:root[data-theme="dark"] .message.bot {
+    background: linear-gradient(135deg, #0f766e 0%, #115e59 100%);
+    border: 1px solid rgba(255,255,255,0.10);
+    color: var(--app-text);
+}

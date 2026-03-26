@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% block title %}Paramètres{% endblock %}
+{% block content %}
+<!-- Page Paramètres : profil, thème, mot de passe -->
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="mb-0"><i class="fas fa-sliders-h me-2"></i>Paramètres</h2>
+        </div>
+
+        <div class="row g-4">
+            <!-- Profil + Apparence -->
+            <div class="col-lg-7">
+                <div class="card shadow-lg border-0">
+                    <div class="card-header bg-primary text-white py-3">
+                        <h5 class="mb-0"><i class="fas fa-user-cog me-2"></i>Profil et apparence</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" action="">
+                            {{ profile_form.hidden_tag() }}
+
+                            <!-- Infos non modifiables (source: current_user) -->
+                            <div class="row g-3 mb-2">
+                                <div class="col-md-6">
+                                    <label class="form-label">Nom d'utilisateur</label>
+                                    <input class="form-control" type="text" value="{{ current_user.username }}" disabled>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Rôle</label>
+                                    <input class="form-control" type="text" value="{{ current_user.role }}" disabled>
+                                </div>
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    {{ profile_form.full_name.label(class="form-label") }}
+                                    {{ profile_form.full_name(class="form-control" + (" is-invalid" if profile_form.full_name.errors else ""), placeholder="Votre nom complet") }}
+                                    {% for error in profile_form.full_name.errors %}
+                                        <div class="invalid-feedback">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                                <div class="col-md-6">
+                                    {{ profile_form.phone.label(class="form-label") }}
+                                    {{ profile_form.phone(class="form-control" + (" is-invalid" if profile_form.phone.errors else ""), placeholder="Téléphone") }}
+                                    {% for error in profile_form.phone.errors %}
+                                        <div class="invalid-feedback">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                                <div class="col-12">
+                                    {{ profile_form.email.label(class="form-label") }}
+                                    {{ profile_form.email(class="form-control" + (" is-invalid" if profile_form.email.errors else ""), placeholder="email@exemple.com") }}
+                                    {% for error in profile_form.email.errors %}
+                                        <div class="invalid-feedback">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                                <div class="col-md-6">
+                                    {{ profile_form.theme.label(class="form-label") }}
+                                    {{ profile_form.theme(class="form-select", id="theme-select") }}
+                                    <div class="form-text">Aperçu immédiat sur cette page, puis enregistrer.</div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-end mt-3">
+                                {{ profile_form.save_profile(class="btn btn-primary") }}
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sécurité -->
+            <div class="col-lg-5">
+                <div class="card shadow-lg border-0">
+                    <div class="card-header bg-success text-white py-3">
+                        <h5 class="mb-0"><i class="fas fa-shield-alt me-2"></i>Sécurité</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" action="">
+                            {{ password_form.hidden_tag() }}
+
+                            <div class="mb-3">
+                                {{ password_form.current_password.label(class="form-label") }}
+                                {{ password_form.current_password(class="form-control" + (" is-invalid" if password_form.current_password.errors else "")) }}
+                                {% for error in password_form.current_password.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="mb-3">
+                                {{ password_form.new_password.label(class="form-label") }}
+                                {{ password_form.new_password(class="form-control" + (" is-invalid" if password_form.new_password.errors else "")) }}
+                                {% for error in password_form.new_password.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="mb-3">
+                                {{ password_form.new_password2.label(class="form-label") }}
+                                {{ password_form.new_password2(class="form-control" + (" is-invalid" if password_form.new_password2.errors else "")) }}
+                                {% for error in password_form.new_password2.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="d-grid">
+                                {{ password_form.change_password(class="btn btn-success") }}
+                            </div>
+                        </form>
+
+                        <hr>
+                        <div class="text-muted small">
+                            <div><strong>Créé le :</strong> {{ current_user.created_at.strftime('%d/%m/%Y %H:%M') }}</div>
+                            <div><strong>ID :</strong> {{ current_user.id }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Aperçu du thème (clair/sombre) directement sur la page Paramètres.
+    (function () {
+        const themeSelect = document.getElementById('theme-select');
+        if (!themeSelect) return;
+
+        function applyTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            try { localStorage.setItem('theme', theme); } catch (e) { /* ignore */ }
+        }
+
+        applyTheme(themeSelect.value);
+        themeSelect.addEventListener('change', function () {
+            applyTheme(themeSelect.value);
+        });
+    })();
+</script>
+{% endblock %}
+

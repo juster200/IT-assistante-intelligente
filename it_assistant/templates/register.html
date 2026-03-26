@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Inscription{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-lg border-0 rounded-lg">
+            <div class="card-header bg-success text-white text-center py-4">
+                <i class="fas fa-user-plus fa-3x mb-3"></i>
+                <h3 class="mb-0">Inscription</h3>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" action="">
+                    {{ form.hidden_tag() }}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><i class="fas fa-user me-2"></i>Nom d'utilisateur</label>
+                            {{ form.username(class="form-control" + (" is-invalid" if form.username.errors else ""), placeholder="Choisissez un pseudo") }}
+                            {% for error in form.username.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><i class="fas fa-envelope me-2"></i>Email</label>
+                            {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else ""), placeholder="votre@email.com") }}
+                            {% for error in form.email.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><i class="fas fa-key me-2"></i>Mot de passe</label>
+                            {{ form.password(class="form-control" + (" is-invalid" if form.password.errors else ""), placeholder="Minimum 6 caractères") }}
+                            {% for error in form.password.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><i class="fas fa-redo me-2"></i>Confirmation</label>
+                            {{ form.password2(class="form-control" + (" is-invalid" if form.password2.errors else ""), placeholder="Retaper le mot de passe") }}
+                            {% for error in form.password2.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><i class="fas fa-user-tag me-2"></i>Rôle</label>
+                        {{ form.role(class="form-select", id="role-select") }}
+                    </div>
+                    <div class="mb-3" id="secret-code-div" style="display: none;">
+                        <label class="form-label"><i class="fas fa-lock me-2"></i>Code secret (technicien)</label>
+                        {{ form.secret_code(class="form-control", placeholder="Code réservé") }}
+                        <div class="form-text">Demandez le code à votre administrateur.</div>
+                    </div>
+                    <div class="d-grid">
+                        {{ form.submit(class="btn btn-success btn-lg") }}
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer text-center py-3">
+                <p class="mb-0">Déjà inscrit ? <a href="{{ url_for('auth.login') }}">Connectez-vous</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const roleSelect = document.getElementById('role-select');
+    const secretDiv = document.getElementById('secret-code-div');
+    function toggleSecretField() {
+        secretDiv.style.display = roleSelect.value === 'technician' ? 'block' : 'none';
+    }
+    roleSelect.addEventListener('change', toggleSecretField);
+    toggleSecretField();
+</script>
+{% endblock %}

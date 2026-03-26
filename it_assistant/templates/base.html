@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="{{ current_user.settings.theme if current_user.is_authenticated and current_user.settings else 'light' }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Assistant IT{% endblock %}</title>
+    <script>
+        // Applique le thème tôt pour éviter un "flash" lors du chargement (FOUC).
+        (function () {
+            try {
+                var isAuthed = {{ 'true' if current_user.is_authenticated else 'false' }};
+                if (!isAuthed) {
+                    var stored = localStorage.getItem('theme');
+                    if (stored === 'dark' || stored === 'light') {
+                        document.documentElement.setAttribute('data-theme', stored);
+                    }
+                } else {
+                    // Sync : permet de conserver le thème sur les pages non authentifiées (login/register).
+                    var serverTheme = document.documentElement.getAttribute('data-theme') || 'light';
+                    localStorage.setItem('theme', serverTheme);
+                }
+            } catch (e) {
+                /* ignore */
+            }
+        })();
+    </script>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 6 (icônes) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Feuille de style personnalisée -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Barre de navigation avec dégradé -->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="{{ url_for('main.index') }}">
+                <i class="fas fa-robot me-2"></i>Assistant IT
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    {% if current_user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('main.dashboard') }}">
+                                <i class="fas fa-tachometer-alt me-1"></i>Tableau de bord
+                            </a>
+                        </li>
+                        {% if current_user.is_technician() or current_user.is_admin() %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('tickets.list_tickets') }}">
+                                    <i class="fas fa-ticket-alt me-1"></i>Tickets
+                                </a>
+                            </li>
+                        {% endif %}
+                        {% if current_user.is_admin() %}
+                            <!-- Base de connaissances :
+                                 - Accès admin uniquement.
+                                 - Demande : masquer la base de connaissances aux techniciens et utilisateurs. -->
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('knowledge.list_knowledge') }}">
+                                    <i class="fas fa-book me-1"></i>Base de connaissances
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('admin.list_users') }}">
+                                    <i class="fas fa-users me-1"></i>Utilisateurs
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('admin.stats') }}">
+                                    <i class="fas fa-chart-bar me-1"></i>Statistiques
+                                </a>
+                            </li>
+                        {% endif %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('main.diagnostic') }}">
+                                <i class="fas fa-stethoscope me-1"></i>Diagnostics
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-user-circle me-1"></i>{{ current_user.username }}
+                                <span class="badge bg-{{ 'danger' if current_user.role=='admin' else 'warning' if current_user.role=='technician' else 'secondary' }} ms-1">
+                                    {{ current_user.role }}
+                                </span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <!-- Accès rapide aux réglages du compte (profil, thème, mot de passe) -->
+                                <li><a class="dropdown-item" href="{{ url_for('settings.index') }}"><i class="fas fa-sliders-h me-2"></i>Paramètres</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}"><i class="fas fa-sign-out-alt me-2"></i>Déconnexion</a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('auth.login') }}"><i class="fas fa-sign-in-alt me-1"></i>Connexion</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('auth.register') }}"><i class="fas fa-user-plus me-1"></i>Inscription</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenu principal avec messages flash -->
+    <div class="container mt-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show shadow-lg border-0" role="alert" style="border-radius: 10px;">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- JavaScript personnalisé -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
