@@ -236,7 +236,7 @@ Ces endpoints sont réservés aux utilisateurs authentifiés.
 
 ## 👥 Auteurs
 
-- **Votre Nom** – Étudiant en Licence Systèmes et Réseaux  
+- **SANDOGO KOSSI Justin** – Étudiant en Licence Systèmes et Réseaux  
   Email : sandogojustin68@gmail.com
 
 Projet réalisé dans le cadre de la soutenance de fin d’année.
